@@ -1,8 +1,9 @@
 #include "Player.h"
 
 Player::Player() {
-    this->InitSprite();
     this->InitTexture();
+    this->InitSprite();
+    this->Speed = 5.f;
 }
 
 Player::~Player() {
@@ -22,11 +23,18 @@ void Player::Render(sf::RenderTarget& target) {
 void Player::InitSprite() {
     // Load the texture into the sprite
     this->sprite.setTexture(this->texture);
+
+    // Set sprite size
+    this->sprite.setScale(0.4f, 0.4f);
 }
 
 void Player::InitTexture() {
     // Load the texture from a file
-
-
+    if (!this->texture.loadFromFile("../Sprites/ship.png")) {
+        std::cout << "Error when loading texture image." << std::endl;
+    }
 }
 
+void Player::Move(const float X, const float Y) {
+    this->sprite.move(this->Speed * X, this->Speed * Y);
+}

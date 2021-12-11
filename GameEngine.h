@@ -7,8 +7,12 @@ class GameEngine {
 private:
     sf::RenderWindow* window;
 
+    // Player
+    Player* player;
+
     // Private Functions
     void InitWindow();
+    void InitPlayer();
 
 public:
     GameEngine();
