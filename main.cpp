@@ -1,6 +1,10 @@
 #include <iostream>
+#include "GameEngine.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    GameEngine game;
+    game.Run();
+
+    // End of application
     return 0;
 }
