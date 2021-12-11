@@ -21,6 +21,8 @@ public:
     // Functions
     void Run();
 
+    void UpdatePollEvents();
+    void UpdateInput();
     void Update();
     void Render();
 };

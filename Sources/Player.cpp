@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "../Headers/Player.h"
 
 Player::Player() {
     this->InitTexture();
@@ -30,7 +30,7 @@ void Player::InitSprite() {
 
 void Player::InitTexture() {
     // Load the texture from a file
-    if (!this->texture.loadFromFile("../Sprites/ship.png")) {
+    if (!this->texture.loadFromFile("Sprites/ship.png")) {
         std::cout << "Error when loading texture image." << std::endl;
     }
 }

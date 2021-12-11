@@ -7,11 +7,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
         main.cpp
-        GameEngine.h
-        GameEngine.cpp
-        Player.h
-        Player.cpp
-        Sprites/ship.png)
+        Headers/GameEngine.h
+        Sources/GameEngine.cpp
+        Headers/Player.h
+        Sources/Player.cpp
+        Sprites/ship.png Sources/Bullet.cpp Headers/Bullet.h)
 
 add_executable(SpaceShooter ${SOURCE_FILES})
 include_directories(/usr/local/include)
