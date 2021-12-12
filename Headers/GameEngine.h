@@ -2,6 +2,8 @@
 #define SPACE_SHOOTER_GAMEENGINE_H
 
 #include <map>
+#include <string>
+#include <sstream>
 #include "Player.h"
 #include "Bullet.h"
 #include "Enemy.h"
@@ -14,6 +16,13 @@ private:
     // Resources
     std::map<std::string, sf::Texture*> textures;
     std::vector<Bullet*> bullets;
+
+    // GUI
+    sf::Font font;
+    sf::Text point_counter;
+    sf::Texture background_texture;
+    sf::Sprite background;
+    unsigned points;
 
 
     // Player
@@ -30,6 +39,9 @@ private:
     void InitTextures();
     void InitPlayer();
     void InitEnemies();
+    void InitGUI();
+    void InitBackground();
+    void InitVariables();
 
 public:
     GameEngine();
@@ -40,10 +52,16 @@ public:
 
     void UpdatePollEvents();
     void UpdateInput();
-    void UpdateEnemies();
     void UpdateBullets();
+    void UpdateEnemies();
+    void UpdateCombat();
+    void UpdateCollision();
+    void UpdateBackground();
+    void UpdateGUI();
     void Update();
     void Render();
+    void RenderGUI();
+    void RenderBackground();
 };
 
 #endif //SPACE_SHOOTER_GAMEENGINE_H

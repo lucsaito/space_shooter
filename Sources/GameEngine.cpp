@@ -3,6 +3,9 @@
 GameEngine::GameEngine() {
     this->InitWindow();
     this->InitTextures();
+    this->InitGUI();
+    this->InitBackground();
+    this->InitVariables();
     this->InitPlayer();
     this->InitEnemies();
 }
@@ -51,13 +54,23 @@ void GameEngine::Run() {
 void GameEngine::Update() {
     this->UpdatePollEvents();
     this->UpdateInput();
+
     this->player->Update();
+    this->UpdateCollision();
+
     this->UpdateBullets();
     this->UpdateEnemies();
+    this->UpdateCombat();
+
+    this->UpdateGUI();
+    this->UpdateBackground();
 }
 
 void GameEngine::Render() {
     this->window->clear();
+
+    // Sets background
+    this->RenderBackground();
 
     // After clearing the window we must draw the objects
     this->player->Render(*this->window);
@@ -70,7 +83,10 @@ void GameEngine::Render() {
         enemy->Render(*this->window);
     }
 
+    this->RenderGUI();
+
     this->window->display();
+
 }
 
 void GameEngine::UpdatePollEvents() {
@@ -133,6 +149,7 @@ void GameEngine::UpdateBullets() {
 }
 
 void GameEngine::UpdateEnemies() {
+    // Spawn enemies
     this->SpawnTimer += 0.5f;
     if (this->SpawnTimer >= this->SpawnTimerMax) {
         // Enemy shapes are created here
@@ -140,14 +157,24 @@ void GameEngine::UpdateEnemies() {
         this->SpawnTimer = 0.f;
     }
 
-    for (int i = 0; i < enemies.size(); ++i) {
-        this->enemies[i]->Update();
+    // Update
+    unsigned counter = 0;
 
-        // Remove enemies at the bottom
-        if (this->enemies[i]->GetBounds().top > this->window->getSize().y) {
-            this->enemies.erase(this->enemies.begin() + i);
+    for (auto *enemy: this->enemies) {
+        enemy->Update();
+
+        // Bullets outside of the screen are deleted
+        if (enemy->GetBounds().top > this->window->getSize().y) {
+            delete this->enemies.at(counter);
+            this->enemies.erase(this->enemies.begin() + counter);
+            --counter;
+        } else if (enemy->GetBounds().intersects(this->player->GetBounds())){
+            // Condition if the enemy hits the player
+            delete this->enemies.at(counter);
+            this->enemies.erase(this->enemies.begin() + counter);
+            --counter;
         }
-
+        ++counter;
     }
 
 }
@@ -156,3 +183,86 @@ void GameEngine::InitEnemies() {
     this->SpawnTimerMax = 50.f;
     this->SpawnTimer = this->SpawnTimerMax;
 }
+
+void GameEngine::InitGUI() {
+    if (!this->font.loadFromFile("Fonts/HaarlemSerif.ttf")) {
+        std::cout << "Failed to load font" << std::endl;
+    }
+    this->point_counter.setFont(this->font);
+    this->point_counter.setCharacterSize(12);
+    this->point_counter.setFillColor(sf::Color::White);
+    this->point_counter.setString("This is a test string");
+}
+
+void GameEngine::UpdateGUI() {
+    std::stringstream ss;
+    ss << "Points: " << this->points;
+    this->point_counter.setString(ss.str());
+}
+
+void GameEngine::RenderGUI() {
+    this->window->draw(this->point_counter);
+}
+
+void GameEngine::UpdateCombat() {
+    for (int i = 0; i < enemies.size(); ++i) {
+        bool enemy_was_deleted = false;
+
+        for (int k = 0; k < this->bullets.size() && enemy_was_deleted == false; k++) {
+            // Finds the bullet collision with enemy
+            if (this->enemies[i]->GetBounds().intersects(this->bullets[k]->GetBounds())) {
+                // Increases the point number
+                this->points += this->enemies[i]->GetPoints();
+
+                delete this->enemies[i];
+                this->enemies.erase(this->enemies.begin() + i);
+
+                delete this->bullets[k];
+                this->bullets.erase(this->bullets.begin() + k);
+
+
+                enemy_was_deleted = true;
+
+            }
+        }
+    }
+}
+
+void GameEngine::InitBackground() {
+    if (!this->background_texture.loadFromFile("Sprites/space.jpg")) {
+        std::cout << "Error when loading background." << std::endl;
+    }
+    this->background.setTexture(this->background_texture);
+}
+
+void GameEngine::UpdateBackground() {
+
+}
+
+void GameEngine::RenderBackground() {
+    this->window->draw(this->background);
+}
+
+void GameEngine::UpdateCollision() {
+    // Keeps the play on the screen
+    if (this->player->GetBounds().left < 0.f) {
+        this->player->SetPosition(0.f, this->player->GetBounds().top);
+    }
+    if (this->player->GetBounds().top < 0.f) {
+        this->player->SetPosition(this->player->GetBounds().left, 0.f);
+    }
+
+    if (this->player->GetBounds().left + this->player->GetBounds().width >= this->window->getSize().x) {
+        this->player->SetPosition(this->window->getSize().x - this->player->GetBounds().width, this->player->GetBounds().top);
+    }
+
+    if (this->player->GetBounds().top + this->player->GetBounds().height >= this->window->getSize().y) {
+        this->player->SetPosition(this->player->GetBounds().left, this->window->getSize().y - this->player->GetBounds().height);
+    }
+
+}
+
+void GameEngine::InitVariables() {
+    this->points = 0;
+}
+
