@@ -13,7 +13,7 @@ set(SOURCE_FILES
         Sources/Player.cpp
         Headers/Bullet.h
         Sources/Bullet.cpp
-        Sprites/ship.png)
+        Sprites/ship.png Sources/Enemy.cpp Headers/Enemy.h)
 
 add_executable(SpaceShooter ${SOURCE_FILES})
 include_directories(/usr/local/include)

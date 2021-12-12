@@ -4,6 +4,7 @@
 #include <map>
 #include "Player.h"
 #include "Bullet.h"
+#include "Enemy.h"
 
 class GameEngine {
 private:
@@ -18,10 +19,17 @@ private:
     // Player
     Player* player;
 
+    // Enemies
+    float SpawnTimer;
+    float SpawnTimerMax;
+    std::vector<Enemy*> enemies;
+
+
     // Private Functions
     void InitWindow();
     void InitTextures();
     void InitPlayer();
+    void InitEnemies();
 
 public:
     GameEngine();
@@ -32,6 +40,7 @@ public:
 
     void UpdatePollEvents();
     void UpdateInput();
+    void UpdateEnemies();
     void UpdateBullets();
     void Update();
     void Render();

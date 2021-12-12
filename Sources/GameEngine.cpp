@@ -4,6 +4,7 @@ GameEngine::GameEngine() {
     this->InitWindow();
     this->InitTextures();
     this->InitPlayer();
+    this->InitEnemies();
 }
 
 GameEngine::~GameEngine() {
@@ -18,6 +19,11 @@ GameEngine::~GameEngine() {
     // Delete bullets
     for (auto *i: this->bullets) {
         delete i;
+    }
+
+    //  Delete enemies
+    for (auto *enemy: this->enemies) {
+        delete enemy;
     }
 }
 
@@ -47,6 +53,7 @@ void GameEngine::Update() {
     this->UpdateInput();
     this->player->Update();
     this->UpdateBullets();
+    this->UpdateEnemies();
 }
 
 void GameEngine::Render() {
@@ -54,8 +61,13 @@ void GameEngine::Render() {
 
     // After clearing the window we must draw the objects
     this->player->Render(*this->window);
+
     for (auto *bullet: this->bullets) {
         bullet->Render(*this->window);
+    }
+
+    for (auto *enemy: this->enemies) {
+        enemy->Render(*this->window);
     }
 
     this->window->display();
@@ -89,9 +101,9 @@ void GameEngine::UpdateInput() {
     }
 
     // Bullet
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->CanAttack()) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->player->CanAttack()) {
         this->bullets.push_back(new Bullet(this->textures["Bullet"],
-                                           this->player->GetPosition().x,
+                                           this->player->GetPosition().x + this->player->GetBounds().width/2.f,
                                            this->player->GetPosition().y,
                                            0.f,
                                            -1.f,
@@ -118,4 +130,29 @@ void GameEngine::UpdateBullets() {
         }
         ++counter;
     }
+}
+
+void GameEngine::UpdateEnemies() {
+    this->SpawnTimer += 0.5f;
+    if (this->SpawnTimer >= this->SpawnTimerMax) {
+        // Enemy shapes are created here
+        this->enemies.push_back(new Enemy(rand() % this->window->getSize().x - 20.f, -100.f));
+        this->SpawnTimer = 0.f;
+    }
+
+    for (int i = 0; i < enemies.size(); ++i) {
+        this->enemies[i]->Update();
+
+        // Remove enemies at the bottom
+        if (this->enemies[i]->GetBounds().top > this->window->getSize().y) {
+            this->enemies.erase(this->enemies.begin() + i);
+        }
+
+    }
+
+}
+
+void GameEngine::InitEnemies() {
+    this->SpawnTimerMax = 50.f;
+    this->SpawnTimer = this->SpawnTimerMax;
 }
