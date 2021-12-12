@@ -10,8 +10,11 @@ private:
     sf::Sprite sprite;
     sf::Texture texture;
     float Speed;
+    float AttackCooldown;
+    float AttackCooldownMax;
 
     // Private Functions
+    void InitVariables();
     void InitSprite();
     void InitTexture();
 
@@ -23,7 +26,9 @@ public:
 
     // Functions
     void Move(const float X, const float Y);
+    const bool CanAttack();
 
+    void UpdateAttack();
     void Update();
     void Render(sf::RenderTarget& target);
 };

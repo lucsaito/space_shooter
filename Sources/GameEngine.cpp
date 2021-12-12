@@ -45,6 +45,7 @@ void GameEngine::Run() {
 void GameEngine::Update() {
     this->UpdatePollEvents();
     this->UpdateInput();
+    this->player->Update();
     this->UpdateBullets();
 }
 
@@ -74,25 +75,27 @@ void GameEngine::UpdatePollEvents() {
 
 void GameEngine::UpdateInput() {
     // Player movement
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         this->player->Move(-1.f, 0.f);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         this->player->Move(1.f, 0.f);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         this->player->Move(0.f, -1.f);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
         this->player->Move(0.f, 1.f);
     }
 
     // Bullet
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->CanAttack()) {
         this->bullets.push_back(new Bullet(this->textures["Bullet"],
                                            this->player->GetPosition().x,
                                            this->player->GetPosition().y,
-                                           0.f, 0.f, 0.f));
+                                           0.f,
+                                           -1.f,
+                                           5.f));
     }
 }
 
@@ -102,7 +105,17 @@ void GameEngine::InitTextures() {
 }
 
 void GameEngine::UpdateBullets() {
+    unsigned counter = 0;
+
     for (auto *bullet: this->bullets) {
         bullet->Update();
+
+        // Bullets outside of the screen are deleted
+        if (bullet->GetBounds().top + bullet->GetBounds().height < 0.f) {
+            delete this->bullets.at(counter);
+            this->bullets.erase(this->bullets.begin() + counter);
+            --counter;
+        }
+        ++counter;
     }
 }

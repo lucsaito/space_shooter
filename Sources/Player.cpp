@@ -1,9 +1,9 @@
 #include "../Headers/Player.h"
 
 Player::Player() {
+    this->InitVariables();
     this->InitTexture();
     this->InitSprite();
-    this->Speed = 5.f;
 }
 
 Player::~Player() {
@@ -12,7 +12,7 @@ Player::~Player() {
 
 // Functions
 void Player::Update() {
-
+    this->UpdateAttack();
 }
 
 void Player::Render(sf::RenderTarget& target) {
@@ -41,4 +41,24 @@ void Player::Move(const float X, const float Y) {
 
 const sf::Vector2f &Player::GetPosition() const {
     return this->sprite.getPosition();
+}
+
+void Player::UpdateAttack() {
+    if (this->AttackCooldown < this->AttackCooldownMax) {
+        this->AttackCooldown += 0.5f;
+    }
+}
+
+const bool Player::CanAttack() {
+    if (this->AttackCooldown >= this->AttackCooldownMax) {
+        this->AttackCooldown = 0.f;
+        return true;
+    }
+    return false;
+}
+
+void Player::InitVariables() {
+    this->Speed = 6.f;
+    this->AttackCooldownMax = 10.f;
+    this->AttackCooldown = this->AttackCooldownMax;
 }
