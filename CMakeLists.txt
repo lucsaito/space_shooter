@@ -11,7 +11,9 @@ set(SOURCE_FILES
         Sources/GameEngine.cpp
         Headers/Player.h
         Sources/Player.cpp
-        Sprites/ship.png Sources/Bullet.cpp Headers/Bullet.h)
+        Headers/Bullet.h
+        Sources/Bullet.cpp
+        Sprites/ship.png)
 
 add_executable(SpaceShooter ${SOURCE_FILES})
 include_directories(/usr/local/include)

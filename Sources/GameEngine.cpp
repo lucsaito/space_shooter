@@ -2,12 +2,23 @@
 
 GameEngine::GameEngine() {
     this->InitWindow();
+    this->InitTextures();
     this->InitPlayer();
 }
 
 GameEngine::~GameEngine() {
     delete this->window;
     delete this->player;
+
+    // Delete textures
+    for (auto &i: this->textures) {
+        delete i.second;
+    }
+
+    // Delete bullets
+    for (auto *i: this->bullets) {
+        delete i;
+    }
 }
 
 // Private Functions
@@ -34,6 +45,7 @@ void GameEngine::Run() {
 void GameEngine::Update() {
     this->UpdatePollEvents();
     this->UpdateInput();
+    this->UpdateBullets();
 }
 
 void GameEngine::Render() {
@@ -41,6 +53,9 @@ void GameEngine::Render() {
 
     // After clearing the window we must draw the objects
     this->player->Render(*this->window);
+    for (auto *bullet: this->bullets) {
+        bullet->Render(*this->window);
+    }
 
     this->window->display();
 }
@@ -70,5 +85,24 @@ void GameEngine::UpdateInput() {
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
         this->player->Move(0.f, 1.f);
+    }
+
+    // Bullet
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        this->bullets.push_back(new Bullet(this->textures["Bullet"],
+                                           this->player->GetPosition().x,
+                                           this->player->GetPosition().y,
+                                           0.f, 0.f, 0.f));
+    }
+}
+
+void GameEngine::InitTextures() {
+    this->textures["Bullet"] = new sf::Texture();
+    this->textures["Bullet"]->loadFromFile("Sprites/bullet.png");
+}
+
+void GameEngine::UpdateBullets() {
+    for (auto *bullet: this->bullets) {
+        bullet->Update();
     }
 }

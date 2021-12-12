@@ -38,3 +38,7 @@ void Player::InitTexture() {
 void Player::Move(const float X, const float Y) {
     this->sprite.move(this->Speed * X, this->Speed * Y);
 }
+
+const sf::Vector2f &Player::GetPosition() const {
+    return this->sprite.getPosition();
+}

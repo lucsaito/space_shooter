@@ -19,6 +19,8 @@ public:
     Player();
     virtual ~Player();
 
+    const sf::Vector2f& GetPosition() const;
+
     // Functions
     void Move(const float X, const float Y);
 
