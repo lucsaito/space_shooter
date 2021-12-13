@@ -22,7 +22,9 @@ private:
     sf::Text point_counter;
     sf::Texture background_texture;
     sf::Sprite background;
+    sf::Text game_over_text;
     unsigned points;
+
 
 
     // Player

@@ -46,13 +46,16 @@ void GameEngine::InitPlayer() {
 // Functions
 void GameEngine::Run() {
     while (this->window->isOpen()) {
-        this->Update();
+        this->UpdatePollEvents();
+
+        if (this->player->GetHp() > 0) {
+            this->Update();
+        }
         this->Render();
     }
 }
 
 void GameEngine::Update() {
-    this->UpdatePollEvents();
     this->UpdateInput();
 
     this->player->Update();
@@ -84,6 +87,11 @@ void GameEngine::Render() {
     }
 
     this->RenderGUI();
+
+    // Game over
+    if (this->player->GetHp() <= 0) {
+        this->window->draw(this->game_over_text);
+    }
 
     this->window->display();
 
@@ -193,6 +201,14 @@ void GameEngine::InitGUI() {
     this->point_counter.setCharacterSize(50);
     this->point_counter.setFillColor(sf::Color::White);
     this->point_counter.setString("This is a test string");
+
+    this->game_over_text.setFont(this->font);
+    this->game_over_text.setCharacterSize(100);
+    this->game_over_text.setFillColor(sf::Color::Red);
+    this->game_over_text.setString("Game Over!");
+    this->game_over_text.setPosition(this->window->getSize().x / 2.f - this->game_over_text.getGlobalBounds().width/2.f,
+                                     this->window->getSize().y / 2.f - this->game_over_text.getGlobalBounds().height/2.f);
+
 
     // Player HP Bar
     this->player_hp_bar.setSize(sf::Vector2f(300.f, 24.f));
