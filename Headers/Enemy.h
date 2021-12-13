@@ -24,6 +24,7 @@ public:
 
     const sf::FloatRect GetBounds() const;
     const int& GetPoints() const;
+    const int& GetDamage() const;
 
     void Update();
     void Render(sf::RenderTarget& target);

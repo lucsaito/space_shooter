@@ -48,3 +48,7 @@ const sf::FloatRect Enemy::GetBounds() const {
 const int &Enemy::GetPoints() const{
     return this->points;
 }
+
+const int &Enemy::GetDamage() const {
+    return this->damage;
+}

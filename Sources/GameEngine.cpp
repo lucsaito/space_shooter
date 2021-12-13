@@ -170,6 +170,7 @@ void GameEngine::UpdateEnemies() {
             --counter;
         } else if (enemy->GetBounds().intersects(this->player->GetBounds())){
             // Condition if the enemy hits the player
+            this->player->LoseHp(this->enemies.at(counter)->GetDamage());
             delete this->enemies.at(counter);
             this->enemies.erase(this->enemies.begin() + counter);
             --counter;
@@ -189,19 +190,34 @@ void GameEngine::InitGUI() {
         std::cout << "Failed to load font" << std::endl;
     }
     this->point_counter.setFont(this->font);
-    this->point_counter.setCharacterSize(12);
+    this->point_counter.setCharacterSize(50);
     this->point_counter.setFillColor(sf::Color::White);
     this->point_counter.setString("This is a test string");
+
+    // Player HP Bar
+    this->player_hp_bar.setSize(sf::Vector2f(300.f, 24.f));
+    this->player_hp_bar.setFillColor(sf::Color::Green);
+    this->player_hp_bar.setPosition(sf::Vector2f(20.f, 20.f));
+
+    this->player_hp_bar_back = this->player_hp_bar;
+    this->player_hp_bar_back.setFillColor(sf::Color(25, 25, 25, 200));
 }
 
 void GameEngine::UpdateGUI() {
     std::stringstream ss;
     ss << "Points: " << this->points;
     this->point_counter.setString(ss.str());
+
+    // Update HPBar
+    float hp_percent = static_cast<float>(this->player->GetHp()) / this->player->GetMaxHp();
+    this->player_hp_bar.setSize(sf::Vector2f(300.f * hp_percent, this->player_hp_bar.getSize().y));
+
 }
 
 void GameEngine::RenderGUI() {
     this->window->draw(this->point_counter);
+    this->window->draw(this->player_hp_bar_back);
+    this->window->draw(this->player_hp_bar);
 }
 
 void GameEngine::UpdateCombat() {

@@ -27,6 +27,8 @@ private:
 
     // Player
     Player* player;
+    sf::RectangleShape player_hp_bar;
+    sf::RectangleShape player_hp_bar_back;
 
     // Enemies
     float SpawnTimer;
